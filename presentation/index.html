@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SentinelVultr · Blast Radius Zero · Hackathon Pitch Deck</title>
+  <style>
+    :root {
+      --bg: #060b18;
+      --card-bg: #0c162d;
+      --card-border: #1e2e4f;
+      --vultr-blue: #007bfc;
+      --cyan: #00e5ff;
+      --emerald: #10b981;
+      --rose: #ef4444;
+      --amber: #f59e0b;
+      --purple: #a855f7;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      user-select: none;
+    }
+
+    /* Deck Layout */
+    #deck-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 50% 20%, #0d1e3d 0%, #060b18 70%);
+    }
+
+    .slide {
+      position: absolute;
+      width: 90vw;
+      max-width: 1200px;
+      height: 82vh;
+      max-height: 750px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 48px 56px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      opacity: 0;
+      visibility: hidden;
+      transform: scale(0.96) translateY(20px);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 40px rgba(0, 123, 252, 0.12);
+    }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1) translateY(0);
+      z-index: 10;
+    }
+
+    /* Header & Badges */
+    .slide-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .tag-group {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .tag {
+      font-size: 11px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-weight: 700;
+    }
+
+    .tag-vultr {
+      background: rgba(0, 123, 252, 0.18);
+      color: var(--cyan);
+      border: 1px solid rgba(0, 123, 252, 0.4);
+    }
+
+    .tag-secure {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--emerald);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+
+    .tag-danger {
+      background: rgba(239, 68, 68, 0.15);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.35);
+    }
+
+    /* Titles */
+    h1.hero-title {
+      font-size: 52px;
+      font-weight: 800;
+      line-height: 1.1;
+      background: linear-gradient(135deg, #ffffff 40%, var(--cyan) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 16px;
+    }
+
+    h2.slide-title {
+      font-size: 36px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      margin-bottom: 8px;
+    }
+
+    p.subtitle {
+      font-size: 16px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Content Area */
+    .content-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin: 16px 0;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    /* Cards */
+    .card {
+      background: rgba(10, 18, 38, 0.7);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card.highlight {
+      border-color: rgba(0, 123, 252, 0.5);
+      background: linear-gradient(180deg, rgba(0, 123, 252, 0.08) 0%, rgba(10, 18, 38, 0.8) 100%);
+    }
+
+    .card.danger {
+      border-color: rgba(239, 68, 68, 0.4);
+      background: linear-gradient(180deg, rgba(239, 68, 68, 0.08) 0%, rgba(10, 18, 38, 0.8) 100%);
+    }
+
+    .card.success {
+      border-color: rgba(16, 185, 129, 0.4);
+      background: linear-gradient(180deg, rgba(16, 185, 129, 0.08) 0%, rgba(10, 18, 38, 0.8) 100%);
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-desc {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .badge-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    /* Terminal Mock */
+    .terminal-box {
+      background: #030712;
+      border: 1px solid #1f293d;
+      border-radius: 12px;
+      padding: 16px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      color: #34d399;
+      overflow: hidden;
+    }
+
+    .terminal-bar {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .dot-red { background: #ef4444; }
+    .dot-yellow { background: #f59e0b; }
+    .dot-green { background: #10b981; }
+
+    /* Footer & Navigation Controls */
+    .slide-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      padding-top: 18px;
+    }
+
+    #controls-bar {
+      position: fixed;
+      bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: rgba(12, 22, 45, 0.85);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(12px);
+      padding: 8px 18px;
+      border-radius: 9999px;
+      z-index: 100;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .btn-nav {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #fff;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-nav:hover {
+      background: var(--vultr-blue);
+      border-color: var(--vultr-blue);
+    }
+
+    #slide-progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--vultr-blue), var(--cyan));
+      transition: width 0.3s ease;
+      z-index: 200;
+    }
+
+    .notes-drawer {
+      display: none;
+      background: rgba(4, 9, 20, 0.95);
+      border-top: 1px solid var(--card-border);
+      padding: 12px 24px;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      color: #cbd5e1;
+      font-size: 13px;
+      z-index: 90;
+    }
+    .notes-drawer.open {
+      display: block;
+    }
+
+    /* Architecture Flow Diagram */
+    .arch-flow {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 12px 0;
+    }
+
+    .arch-node {
+      flex: 1;
+      background: rgba(15, 28, 59, 0.8);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 18px 14px;
+      text-align: center;
+      position: relative;
+    }
+
+    .arch-node.active-node {
+      border-color: var(--cyan);
+      box-shadow: 0 0 20px rgba(0, 229, 255, 0.15);
+    }
+
+    .arch-arrow {
+      color: var(--cyan);
+      font-size: 18px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Progress Bar -->
+  <div id="slide-progress-bar" style="width: 12.5%;"></div>
+
+  <!-- Deck Container -->
+  <div id="deck-container">
+
+    <!-- SLIDE 1: Title & Pitch -->
+    <div class="slide active" data-slide="1" data-notes="Welcome judges to SentinelVultr. Our thesis: an agent that only chats is a demo; an agent that executes safely is a product. Built for Vultr Agent Rush Hackathon 2026.">
+      <div class="slide-header">
+        <div class="tag-group">
+          <span class="tag tag-vultr">Vultr Agent Rush 2026</span>
+          <span class="tag tag-secure">Challenge 01: Blast Radius Zero</span>
+        </div>
+        <span style="font-family: monospace; font-size: 12px; color: var(--cyan);">v1.0.0 · Production Ready</span>
+      </div>
+
+      <div class="content-area">
+        <h1 class="hero-title">SentinelVultr</h1>
+        <p style="font-size: 22px; font-weight: 600; color: #e2e8f0; margin-bottom: 14px;">
+          Zero-Radius Sandboxed Autonomous Agent Control Plane
+        </p>
+        <p class="subtitle" style="max-width: 860px; margin-bottom: 32px;">
+          Plans, dispatches, and verifies real code execution and browser interactions inside hardware-isolated Vultr sandboxes — zero blast radius, zero host leaks, and 100% verified execution.
+        </p>
+
+        <div class="grid-3">
+          <div class="card highlight">
+            <div class="badge-icon">⚡</div>
+            <div class="card-title">Vultr VM Host</div>
+            <div class="card-desc">FastAPI orchestration engine, WebSockets, & Docker/gVisor container isolation running on Vultr Cloud Compute.</div>
+          </div>
+          <div class="card highlight">
+            <div class="badge-icon">🧠</div>
+            <div class="card-title">Serverless Inference</div>
+            <div class="card-desc">Native OpenAI-compatible integration with <code>api.vultrinference.com/v1</code> powering Llama-3.3-70B planning loops.</div>
+          </div>
+          <div class="card highlight">
+            <div class="badge-icon">🛡️</div>
+            <div class="card-title">The Blast Shield</div>
+            <div class="card-desc">Hardware cgroups (512MB RAM), sterile environment, --network none, and disposable ephemeral lifecycles.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide-footer">
+        <span>Team: Autonomous SecOps</span>
+        <span>Press <kbd style="background:#1e2e4f; padding:2px 6px; border-radius:4px;">→</kbd> or <kbd style="background:#1e2e4f; padding:2px 6px; border-radius:4px;">Space</kbd> to advance</span>
+      </div>
+    </div>
+
+    <!-- SLIDE 2: The Enterprise Dilemma -->
+    <div class="slide" data-slide="2" data-notes="Every enterprise wants agents, but nobody wants to get hacked or wiped. LLMs are prone to prompt injections, rogue commands, and credential leaks.">
+      <div class="slide-header">
+        <div class="tag-group">
+          <span class="tag tag-danger">The Problem</span>
+          <span class="tag tag-vultr">The Enterprise Dilemma</span>
+        </div>
+        <span style="font-family: monospace; font-size: 12px; color: var(--text-muted);">Slide 2 / 8</span>
+      </div>
+
+      <div class="content-area">
+        <h2 class="slide-title">The "Blast Radius" Paralyzing Enterprise AI</h2>
+        <p class="subtitle" style="margin-bottom: 24px;">
+          Autonomous agents have massive potential, but deploying them in production poses catastrophic risks.
+        </p>
+
+        <div class="grid-2">
+          <div class="card danger">
+            <div class="card-title" style="color: #f87171;">⚠️ Uncontained Autonomous Agents</div>
+            <ul style="list-style-type: none; display: flex; flex-direction: column; gap: 10px; font-size: 13.5px; color: #cbd5e1;">
+              <li>❌ <strong>Host Breakout:</strong> Agents execute destructive shell commands or corrupt host file systems.</li>
+              <li>❌ <strong>Credential Harvesting:</strong> Injected prompts extract cloud keys (<code>VULTR_API_KEY</code>, AWS secrets).</li>
+              <li>❌ <strong>Resource Starvation:</strong> Fork bombs or unbounded memory loops crash the host VM.</li>
+              <li>❌ <strong>Unconstrained SSRF:</strong> Outbound requests target internal metadata endpoints (169.254.169.254).</li>
+              <li>❌ <strong>Demo Illusions:</strong> Chatbots simulate actions instead of executing verifiable work.</li>
+            </ul>
+          </div>
+
+          <div class="card success">
+            <div class="card-title" style="color: #34d399;">🛡️ SentinelVultr Guarantee</div>
+            <ul style="list-style-type: none; display: flex; flex-direction: column; gap: 10px; font-size: 13.5px; color: #cbd5e1;">
+              <li>✅ <strong>Process Isolation:</strong> <code>--cap-drop=ALL</code>, non-root user UID 1001, complete namespace isolation.</li>
+              <li>✅ <strong>Hermetic Secret Hygiene:</strong> 0 host environment variables injected; output scrubbed automatically.</li>
+              <li>✅ <strong>Hardware Quotas:</strong> Strict 512MB RAM ceiling and 1.0 vCPU watchdog with forced kill.</li>
+              <li>✅ <strong>Network Egress Block:</strong> <code>--network none</code> prevents any SSRF or exfiltration.</li>
+              <li>✅ <strong>Verifiable Execution:</strong> Real stdout, structured artifacts, DOM trees, and visual proofs.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide-footer">
+        <span>SentinelVultr · Blast Radius Zero</span>
+        <span>Slide 2 of 8</span>
+      </div>
+    </div>
+
+    <!-- SLIDE 3: System Architecture -->
+    <div class="slide" data-slide="3" data-notes="Explain the central control layer on Vultr Cloud Compute VM connecting to Vultr Serverless Inference and orchestrating ephemeral Docker/gVisor sandboxes.">
+      <div class="slide-header">
+        <div class="tag-group">
+          <span class="tag tag-vultr">Vultr Infrastructure</span>
+          <span class="tag tag-secure">System Architecture</span>
+        </div>
+        <span style="font-family: monospace; font-size: 12px; color: var(--text-muted);">Slide 3 / 8</span>
+      </div>
+
+      <div class="content-area">
+        <h2 class="slide-title">Centralized Control Layer Architecture</h2>
+        <p class="subtitle" style="margin-bottom: 20px;">
+          Vultr Cloud Compute acts as the orchestrator; tasks are dispatched into disposable sandboxes.
+        </p>
+
+        <!-- Visual Architecture Flow -->
+        <div class="arch-flow">
+          <div class="arch-node">
+            <div style="font-size: 24px; margin-bottom: 6px;">🖥️</div>
+            <div style="font-weight: 700; font-size: 13px; color: #fff;">Client Dashboard</div>
+            <div style="font-size: 11px; color: var(--text-muted);">Next.js · WebSocket Stream</div>
+          </div>
+          <div class="arch-arrow">➔</div>
+          <div class="arch-node active-node">
+            <div style="font-size: 24px; margin-bottom: 6px;">⚙️</div>
+            <div style="font-weight: 700; font-size: 13px; color: var(--cyan);">Vultr VM Host</div>
+            <div style="font-size: 11px; color: var(--text-muted);">FastAPI Orchestrator & Watchdog</div>
+          </div>
+          <div class="arch-arrow">⇄</div>
+          <div class="arch-node active-node">
+            <div style="font-size: 24px; margin-bottom: 6px;">🧠</div>
+            <div style="font-weight: 700; font-size: 13px; color: var(--cyan);">Vultr Inference</div>
+            <div style="font-size: 11px; color: var(--text-muted);">Llama-3.3-70B · ReAct Planner</div>
+          </div>
+          <div class="arch-arrow">➔</div>
+          <div class="arch-node">
+            <div style="font-size: 24px; margin-bottom: 6px;">📦</div>
+            <div style="font-weight: 700; font-size: 13px; color: #fff;">Disposable Sandbox</div>
+            <div style="font-size: 11px; color: var(--text-muted);">512MB RAM · Ephemeral Wipe</div>
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-top: 16px;">
+          <div class="card">
+            <div class="card-title">Control Plane Security</div>
+            <div class="card-desc">
+              The host maintains state, audits execution steps, and cleanses inputs/outputs before they ever reach the user or the sandbox.
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Closed-Loop Telemetry</div>
+            <div class="card-desc">
+              Every syscall, memory spike, and execution second is streamed in real time over WebSockets to the client telemetry dashboard.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide-footer">
+        <span>SentinelVultr · Blast Radius Zero</span>
+        <span>Slide 3 of 8</span>
+      </div>
+    </div>
+
+    <!-- SLIDE 4: Pattern A · Sandboxed Code & Self-Healing -->
+    <div class="slide" data-slide="4" data-notes="Pattern A takes user goals, writes code, executes in sterile container with 0 egress, and features autonomous self-healing via Vultr Serverless Inference.">
+      <div class="slide-header">
+        <div class="tag-group">
+          <span class="tag tag-vultr">Pattern A</span>
+          <span class="tag tag-secure">Sandboxed Code Execution</span>
+        </div>
+        <span style="font-family: monospace; font-size: 12px; color: var(--text-muted);">Slide 4 / 8</span>
+      </div>
+
+      <div class="content-area">
+        <h2 class="slide-title">Pattern A · Code Execution & Self-Healing</h2>
+        <p class="subtitle" style="margin-bottom: 20px;">
+          From raw analytical query to hardware-contained execution with autonomous error repair.
+        </p>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">Closed-Loop Self-Healing Workflow</div>
+            <ol style="margin-left: 18px; font-size: 13px; color: #cbd5e1; display: flex; flex-direction: column; gap: 8px;">
+              <li><strong>Intent Ingestion:</strong> User assigns task (e.g., CSV forensics, statistical modeling).</li>
+              <li><strong>Vultr Synthesis:</strong> Llama 3.3 writes executable Python/Node code.</li>
+              <li><strong>Jailed Execution:</strong> Runs in container with <code>--network none</code> and sterile environment.</li>
+              <li><strong>Self-Healing Retry:</strong> If runtime exceptions occur (exit code != 0), tracebacks feed back into Vultr Inference to autonomously repair the script until verified.</li>
+            </ol>
+          </div>
+
+          <div class="terminal-box">
+            <div class="terminal-bar">
+              <div class="dot dot-red"></div>
+              <div class="dot dot-yellow"></div>
+              <div class="dot dot-green"></div>
+              <span style="color: #64748b; font-size: 10px; margin-left: 6px;">sandbox-exec · self-healing trace</span>
+            </div>
+            <div style="color: #f87171;">[!] Attempt 1: ZeroDivisionError at line 14</div>
+            <div style="color: #93c5fd;">[*] Triggering Vultr Llama-3.3 Self-Healing Repair...</div>
+            <div style="color: #34d399;">[+] Attempt 2: Script executed successfully!</div>
+            <div style="color: #a7f3d0; margin-top: 6px;">
+              === VERIFIED FINANCIAL SUMMARY ===<br/>
+              Rows Analyzed: 1,420 | Outliers Detected: 2<br/>
+              Mean Variance: $3,120.40 | Artifact: report.json<br/>
+              Host Secrets Exposed: 0 | Status: WIPED
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide-footer">
+        <span>SentinelVultr · Blast Radius Zero</span>
+        <span>Slide 4 of 8</span>
+      </div>
+    </div>
+
+    <!-- SLIDE 5: Pattern B · Sandboxed Browser & HITL -->
+    <div class="slide" data-slide="5" data-notes="Pattern B operates Playwright Chromium in container with screenshot streaming, DOM diffing, and Human-in-the-Loop review gates.">
+      <div class="slide-header">
+        <div class="tag-group">
+          <span class="tag tag-vultr">Pattern B</span>
+          <span class="tag tag-secure">Browser Use & Human-In-The-Loop</span>
+        </div>
+        <span style="font-family: monospace; font-size: 12px; color: var(--text-muted);">Slide 5 / 8</span>
+      </div>
+
+      <div class="content-area">
+        <h2 class="slide-title">Pattern B · Sandboxed Browser & Human-in-the-Loop</h2>
+        <p class="subtitle" style="margin-bottom: 20px;">
+          Autonomous web research and QA sweep with visual receipts and operator approval gates.
+        </p>
+
+        <div class="grid-3">
+          <div class="card">
+            <div class="badge-icon">🌐</div>
+            <div class="card-title">Playwright in Jail</div>
+            <div class="card-desc">Headless Chromium running inside an unprivileged container, isolated from the Vultr VM host filesystem.</div>
+          </div>
+
+          <div class="card">
+            <div class="badge-icon">📸</div>
+            <div class="card-title">Visual Receipts</div>
+            <div class="card-desc">Live viewport frame captures and DOM element extraction streamed directly to the dashboard canvas.</div>
+          </div>
+
+          <div class="card highlight">
+            <div class="badge-icon">👤</div>
+            <div class="card-title">HITL Approval Gate</div>
+            <div class="card-desc">Sensitive actions (purchases, registration forms, state changes) pause execution until explicit operator authorization.</div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top: 16px; background: rgba(15, 23, 42, 0.6);">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-size: 13px; color: #e2e8f0;">
+              <strong style="color: var(--amber);">⚡ Human-in-the-Loop Verification Moment:</strong>
+              "Checkout Dispatch to Cloud Provider requires human approval"
+            </div>
+            <span class="tag tag-secure">Authorized & Contained</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide-footer">
+        <span>SentinelVultr · Blast Radius Zero</span>
+        <span>Slide 5 of 8</span>
+      </div>
+    </div>
+
+    <!-- SLIDE 6: The 4 Pillars of Containment -->
+    <div class="slide" data-slide="6" data-notes="Detail the 4 pillars required by the challenge: Process Isolation, Secret Hygiene, Resource Limits, and Lifecycle Discipline.">
+      <div class="slide-header">
+        <div class="tag-group">
+          <span class="tag tag-secure">Core Requirement</span>
+          <span class="tag tag-vultr">Containment Architecture</span>
+        </div>
+        <span style="font-family: monospace; font-size: 12px; color: var(--text-muted);">Slide 6 / 8</span>
+      </div>
+
+      <div class="content-area">
+        <h2 class="slide-title">The 4 Pillars of Containment</h2>
+        <p class="subtitle" style="margin-bottom: 24px;">
+          Every execution strictly abides by kernel-level containment discipline.
+        </p>
+
+        <div class="grid-4">
+          <div class="card">
+            <div class="badge-icon" style="color: var(--cyan);">1</div>
+            <div class="card-title">Process Isolation</div>
+            <div class="card-desc">
+              <code>--cap-drop=ALL</code><br/>
+              Non-root UID 1001.<br/>
+              No access to host filesystem, sockets, or PID namespaces.
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="badge-icon" style="color: var(--emerald);">2</div>
+            <div class="card-title">Secret Hygiene</div>
+            <div class="card-desc">
+              Sterile environment.<br/>
+              Zero host keys injected.<br/>
+              High-entropy tokens redacted by output scrubber.
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="badge-icon" style="color: var(--amber);">3</div>
+            <div class="card-title">Resource Limits</div>
+            <div class="card-desc">
+              Hard 512MB RAM cap.<br/>
+              1.0 vCPU quota.<br/>
+              30s execution watchdog forcefully terminates runaway tasks.
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="badge-icon" style="color: var(--purple);">4</div>
+            <div class="card-title">Lifecycle Discipline</div>
+            <div class="card-desc">
+              Strictly ephemeral.<br/>
+              Storage & containers destroyed immediately post-execution.<br/>
+              Zero state residue.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide-footer">
+        <span>SentinelVultr · Blast Radius Zero</span>
+        <span>Slide 6 of 8</span>
+      </div>
+    </div>
+
+    <!-- SLIDE 7: The Required Containment Moment -->
+    <div class="slide" data-slide="7" data-notes="This is the showstopper feature for judges and video: live red-team breakout attack safely neutralized with 0% impact on Vultr VM.">
+      <div class="slide-header">
+        <div class="tag-group">
+          <span class="tag tag-danger">Mandatory Demo</span>
+          <span class="tag tag-secure">The Containment Moment</span>
+        </div>
+        <span style="font-family: monospace; font-size: 12px; color: var(--text-muted);">Slide 7 / 8</span>
+      </div>
+
+      <div class="content-area">
+        <h2 class="slide-title">The Showstopper: Red-Team Attack Neutralization</h2>
+        <p class="subtitle" style="margin-bottom: 20px;">
+          Demonstrating malicious payload neutralization inside Vultr sandboxes in real time.
+        </p>
+
+        <div class="grid-2">
+          <div class="card danger">
+            <div class="card-title" style="color: #f87171;">Simulated Red-Team Attack Vectors</div>
+            <ul style="font-size: 12.5px; color: #cbd5e1; display: flex; flex-direction: column; gap: 8px;">
+              <li><strong>1. Host Credential Harvest:</strong> Probes <code>os.environ</code> and <code>/proc/1/environ</code> for <code>VULTR_API_KEY</code>.</li>
+              <li><strong>2. Memory Exhaustion / Fork Bomb:</strong> Allocates 1GB+ memory rapidly to crash the host VM.</li>
+              <li><strong>3. Docker Socket Breakout:</strong> Attempts to mount <code>/var/run/docker.sock</code> for privilege escalation.</li>
+              <li><strong>4. Metadata SSRF:</strong> Attempts egress to <code>169.254.169.254</code> and reverse shells.</li>
+            </ul>
+          </div>
+
+          <div class="terminal-box" style="color: #38bdf8;">
+            <div class="terminal-bar">
+              <div class="dot dot-red"></div>
+              <div class="dot dot-yellow"></div>
+              <div class="dot dot-green"></div>
+              <span style="color: #64748b; font-size: 10px; margin-left: 6px;">redteam-audit-suite</span>
+            </div>
+            <div>[!] Injected Payload Executing...</div>
+            <div style="color: #fca5a5;">[!] Probing environment variables for cloud credentials...</div>
+            <div style="color: #4ade80;">[+] Total visible env vars: 6 (Sterile Minimal Runtime)</div>
+            <div style="color: #4ade80;">[+] Host credentials discovered: 0 (ZERO LEAKS)</div>
+            <div style="color: #fbbf24;">[!] Attempting memory allocation beyond 512MB quota...</div>
+            <div style="color: #4ade80;">[+] Hardware cgroup ceiling hit. Process terminated safely.</div>
+            <div style="color: #34d399; font-weight: bold; margin-top: 8px;">
+              VERDICT: BLAST RADIUS ZERO PRESERVED. HOST VM 100% UNTOUCHED.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide-footer">
+        <span>SentinelVultr · Blast Radius Zero</span>
+        <span>Slide 7 of 8</span>
+      </div>
+    </div>
+
+    <!-- SLIDE 8: Business Value & Hackathon Victory -->
+    <div class="slide" data-slide="8" data-notes="Summarize judging criteria alignment: application of Vultr tech, presentation, enterprise business value, and originality.">
+      <div class="slide-header">
+        <div class="tag-group">
+          <span class="tag tag-secure">Conclusion</span>
+          <span class="tag tag-vultr">Business Impact & Why We Win</span>
+        </div>
+        <span style="font-family: monospace; font-size: 12px; color: var(--text-muted);">Slide 8 / 8</span>
+      </div>
+
+      <div class="content-area">
+        <h2 class="slide-title">Turning Autonomous Agents into Enterprise Reality</h2>
+        <p class="subtitle" style="margin-bottom: 24px;">
+          SentinelVultr removes the fear of autonomous agents, unlocking billions in enterprise automation.
+        </p>
+
+        <div class="grid-4">
+          <div class="card highlight">
+            <div class="badge-icon">🏆</div>
+            <div class="card-title" style="font-size: 15px;">Application of Tech</div>
+            <div class="card-desc">Native Vultr Serverless Inference (Llama 3.3) paired with Vultr Cloud Compute hardware sandboxing.</div>
+          </div>
+
+          <div class="card highlight">
+            <div class="badge-icon">💼</div>
+            <div class="card-title" style="font-size: 15px;">Business Value</div>
+            <div class="card-desc">Zero liability for enterprises: mathematical variance models, web QA, and code repair without security risk.</div>
+          </div>
+
+          <div class="card highlight">
+            <div class="badge-icon">✨</div>
+            <div class="card-title" style="font-size: 15px;">Originality</div>
+            <div class="card-desc">Dual-engine sandboxing (Code + Browser) with self-healing feedback loops and Blast Shield watchdog.</div>
+          </div>
+
+          <div class="card highlight">
+            <div class="badge-icon">🎬</div>
+            <div class="card-title" style="font-size: 15px;">Presentation</div>
+            <div class="card-desc">Production-grade dark mode dashboard, live DAG traces, and 1-click Containment Moment demonstration.</div>
+          </div>
+        </div>
+
+        <div style="margin-top: 24px; text-align: center;">
+          <p style="font-size: 16px; color: var(--cyan); font-weight: 600;">
+            "An agent that only chats is a demo; an agent that executes safely is a product."
+          </p>
+        </div>
+      </div>
+
+      <div class="slide-footer">
+        <span>SentinelVultr · Blast Radius Zero · Agent Rush Hackathon 2026</span>
+        <span>Slide 8 of 8</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom Floating Navigation Bar -->
+  <div id="controls-bar">
+    <button class="btn-nav" id="btn-prev" onclick="changeSlide(-1)">◀ Prev</button>
+    <span id="slide-indicator" style="font-family: monospace; font-size: 12px; font-weight: 700; color: var(--cyan);">
+      1 / 8
+    </span>
+    <button class="btn-nav" id="btn-next" onclick="changeSlide(1)">Next ▶</button>
+    <button class="btn-nav" onclick="toggleNotes()">📝 Notes (N)</button>
+    <button class="btn-nav" onclick="toggleFullscreen()">⛶ Fullscreen (F)</button>
+  </div>
+
+  <!-- Speaker Notes Drawer -->
+  <div id="notes-drawer" class="notes-drawer">
+    <strong>Speaker Notes:</strong> <span id="notes-content">Welcome judges to SentinelVultr. Our thesis: an agent that only chats is a demo; an agent that executes safely is a product. Built for Vultr Agent Rush Hackathon 2026.</span>
+  </div>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 8;
+    const slides = document.querySelectorAll('.slide');
+    const progressBar = document.getElementById('slide-progress-bar');
+    const indicator = document.getElementById('slide-indicator');
+    const notesContent = document.getElementById('notes-content');
+    const notesDrawer = document.getElementById('notes-drawer');
+
+    function updateSlide(newIdx) {
+      if (newIdx < 1 || newIdx > totalSlides) return;
+      currentSlide = newIdx;
+
+      slides.forEach((s, idx) => {
+        if (idx + 1 === currentSlide) {
+          s.classList.add('active');
+          const notes = s.getAttribute('data-notes') || 'No speaker notes for this slide.';
+          notesContent.innerText = notes;
+        } else {
+          s.classList.remove('active');
+        }
+      });
+
+      indicator.innerText = `${currentSlide} / ${totalSlides}`;
+      progressBar.style.width = `${(currentSlide / totalSlides) * 100}%`;
+    }
+
+    function changeSlide(delta) {
+      updateSlide(currentSlide + delta);
+    }
+
+    function toggleNotes() {
+      notesDrawer.classList.toggle('open');
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    // Keyboard Navigation
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'Space') {
+        e.preventDefault();
+        changeSlide(1);
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        changeSlide(-1);
+      } else if (e.key.toLowerCase() === 'n') {
+        toggleNotes();
+      } else if (e.key.toLowerCase() === 'f') {
+        toggleFullscreen();
+      }
+    });
+  </script>
+</body>
+</html>
+

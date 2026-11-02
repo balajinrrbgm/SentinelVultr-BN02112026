@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    container_name: sentinel_vultr_backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=production
+      - VULTR_API_KEY=${VULTR_API_KEY:-}
+      - VULTR_INFERENCE_BASE_URL=${VULTR_INFERENCE_BASE_URL:-https://api.vultrinference.com/v1}
+      - VULTR_MODEL=${VULTR_MODEL:-meta-llama/llama-3.3-70b-instruct}
+      - MAX_MEMORY_MB=512
+      - MAX_CPU_QUOTA=1.0
+      - BLOCK_NETWORK_FOR_CODE=true
+    volumes:
+      # Mount Docker socket so backend can spawn isolated sandboxes
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /tmp/sentinel_sandboxes:/tmp/sentinel_sandboxes
+    networks:
+      - sentinel_net
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: sentinel_vultr_frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    networks:
+      - sentinel_net
+
+networks:
+  sentinel_net:
+    driver: bridge
+
